@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="cs">
+  <head>
+    <title>Area Layer Nostr address</title>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="https://i.imgur.com/4yaPtA2.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+     <link
+       rel="stylesheet"
+       type="text/css"
+       href="//fonts.googleapis.com/css?family=PT+Sans"
+     />
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <main id="main">
+      <div class="title">{{ siteName }}</div>
+      <script>
+      </script>
+      <div class="tagline">Area Layer Nostdress - Server Lightning Address for NIP-05 and NIP-57</div>
+      <div class="owner">
+        <a class="owner-button" :href="siteOwnerURL" target="_blank">
+          Doménu vlastní: <span class="owner-name">{{ siteOwnerName }}</span>
+        </a>
+	<a class="owner-button" href="nostr://npub189v2j2r4q68v5vcua8pqzskvefaue25fy7caa0repjwu2mkpxucqsa9dr5" target="_blank">
+          Nostr profil: <span class="owner-name">{{ siteOwnerName }}</span>
+        </a>
+      </div>
+      <div class="card">
+        <div class="description">
+        To connect your own node to <b>Lightning adress</b>use the form below.
+        </div>
+        <form action="/grab" method="post">
+          <div class="field">
+            <div class="row">
+              <label for="name">Required Name</label>
+            </div>
+            <div class="domain-wrapper">
+              <input class="input" name="name" id="name" />
+              <span v-if="domains.length == 1">@{{ domains[0] }}</span>
+              <span v-if="domains.length > 1">@</span>
+              <select
+                name="domain"
+                id="domain"
+                v-if="domains.length > 1"
+              >
+                <option v-for="domain in domains" :value="domain">
+                  {{ domain }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+          <label for="kind"> Node backend </label>
+            <select name="kind" id="kind" id="kind" v-model="kind">
+              <option disabled value="">Select one:</option>
+              <option value="forward">Address redirection</option>
+              <option value="lnbits">LNbits</option>
+              <option value="lnd">LND</option>
+              <option value="commando">Commando (CLN)</option>
+              <option value="sparko">Sparko (CLN)</option>
+              <option value="eclair">Eclair</option>
+              <option value="lnpay">LNPay</option>
+            </select>
+          </div>
+
+          <div v-if="kind == 'forward'">
+            <div class="field">
+              <label for="host">
+                Přesměrovaní adresy (.well-known)
+              </label>
+              <p><i><b> Příklad:</b> </p>
+			     https://lnpay.cz/.well-known/lnurlp/satoshi</i><br>
+              <input
+                class="input full-width"
+                name="host"
+                id="host"
+                placeholder="https://lnpay.cz/.well-known/lnurlp/satoshi"
+              />
+            </div>
+           
+          </div>
+
+          <div v-if="kind == 'lnd'">
+            <div class="field">
+              <label for="host">
+                 LND REST Host (Protokol + IP/Doména + Port)
+              </label>
+              <input
+                class="input full-width"
+                name="host"
+                id="host"
+                placeholder="http://mujlightningsxsbsxxs.onion:8080"
+              />
+            </div>
+            <div class="field">
+              <label for="macaroon"> Invoice Macaroon (base64 zakódovaný/encoded)</label>
+              <input
+                class="input full-width"
+                name="key"
+                id="macaroon"
+                placeholder="012312432324"
+              />
+            </div>
+          </div>
+          <div v-if="kind == 'sparko' || kind == 'lnbits'">
+            <div class="field">
+              <label for="host"> Host (Protokol + IP/Doména + Port) </label>
+              <input
+                class="input full-width"
+                name="host"
+                id="host"
+                placeholder="http://192.168.16.64:3007"
+              />
+            </div>
+            <div class="field">
+              <label for="key"> Key </label>
+              <input class="input full-width" name="key" id="key" />
+            </div>
+          </div>
+          <div v-if="kind == 'eclair'">
+            <div class="field">
+              <label for="host"> Host (Protocol + IP or Domain + Port) </label>
+              <input
+                class="input full-width"
+                name="host"
+                id="host"
+                placeholder="http://myeclair.com"
+              />
+            </div>
+            <div>
+              <p>
+                Nezadávejte zde heslo Eclair ani neopatrně nezveřejňujte svůj uzel Eclair. Postupujte raději podle těchto pokynů:.
+                <a
+                  href="https://gist.github.com/fiatjaf/8e74740d30763713154de15562e08789#file-exposing-eclair-md"
+                  ></a
+                >
+             	(nebo dle nějakých lepších).
+              </p>
+            </div>
+          </div>
+          <div v-if="kind == 'lnpay'">
+            <div class="field">
+              <label for="pak"> Public Access Key (pak) </label>
+              <input class="input full-width" name="pak" id="pak" />
+            </div>
+            <div class="field">
+              <label for="waki"> Wallet Invoice Key (waki) </label>
+              <input class="input full-width" name="waki" id="waki" />
+            </div>
+          </div>
+          <div class="field">
+            <label style="float: right">
+              Toto je nová Lightning adresa
+              <input type="checkbox" v-model="isNew" />
+            </label>
+          </div>
+          <div v-if="kind == 'commando'">
+            <div class="field">
+              <label for="nodeid">Node ID (pubkey)</label>
+              <input
+                class="input full-width"
+                name="nodeid"
+                id="nodeid"
+                placeholder="02c16cca44562b590dd279c942200bdccfd4f990c3a69fad620c10ef2f8228eaff"
+              />
+            </div>
+            <div class="field">
+              <label for="host">Node IP + Port</label>
+              <input
+                class="input full-width"
+                name="host"
+                id="host"
+                placeholder="10.147.17.32:9735"
+              />
+            </div>
+            <div class="field">
+              <label for="rune">Rune</label>
+              <input class="input full-width" name="rune" id="rune" />
+            </div>
+          </div>
+          <br />
+          <div class="field" v-if="!isNew">
+            <label for="pin"> Tajný pin (Secret PIN) </label>
+            <input class="input full-width" name="pin" id="pin" />
+          </div>
+          <div class="field">
+            <label for="npub">
+             Nostr npub (nepovinné, volitelné pro služby Nostr)
+            </label>
+            <input
+              class="input full-width"
+              name="npub"
+              id="npub"
+              placeholder="npub123..."
+            />
+            <div class="field" id="nostrnotifications" v-if="notifynostr == 'true'" >
+              <label style="float: right">
+                Dostat notifikaci od <a href="nostr://npub1czech0rgapw4nerf242nnxuu7c74phm0v5s0zq74hycsr403ptaqfy0up3">chatbota</a> na Nostru za:</label>
+                <label style="float: left">
+                ZAPnutí s komentářem
+                <input type="checkbox" id="notifycomments" name="notifycomments" v-model="notifycomments" checked />
+             </label>
+             <label style="float: left">
+              ZAPnutí bez komentářem
+              <input type="checkbox" id="notifyzaps" name="notifyzaps" v-model="notifyzaps" checked />
+            </label>
+              <label style="float: left">
+                SATnutí (Ne-ZAPy)
+                <input type="checkbox" id="notifynonzaps" name="notifynonzaps" v-model="notifynonzaps" checked/>
+              </label>
+             
+              </label>
+            </div>
+          </div>
+          <button class="submit" v-if="allowregistration == 'true'" >Odeslat</button>
+       
+      </div>
+      <div class="field">  <label style="float: left"  v-if="allowregistration == 'false'">
+        Registrace byla zakázána administrátorem této domény</label></div>
+    
+     </form>
+      <div class="resources">
+        <a
+          class="resource-button"
+          href="https://github.com/andrerfneves/lightning-address#readme"
+          target="_blank"
+        >
+          Dokumentace projektu Lightningových adres
+        </a>
+        <a
+          class="resource-button"
+          target="_blank"
+          href="https://github.com/3CZPlay/nostdress"
+        >
+          Hostujte tento server také na své doméně!!
+        </a>
+      </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.2/vue.global.prod.min.js"></script>
+    <script>
+      const initial = {} // REPLACED WITH SERVER DATA //
+
+      const Main = {
+        data() {
+          return {
+            kind: 'lnd',
+            isNew: true,
+            ...initial
+          }
+        },
+
+        mounted() {
+          this.kind = ''
+        }
+      }
+
+      Vue.createApp(Main).mount('#main')
+    </script>
+  </body>
+</html>
