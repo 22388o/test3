@@ -67,9 +67,9 @@
           <div v-if="kind == 'forward'">
             <div class="field">
               <label for="host">
-                Přesměrovaní adresy (.well-known)
+               Redirecionamento de endereço (.well-known)
               </label>
-              <p><i><b> Příklad:</b> </p>
+              <p><i><b> Example:</b> </p>
 			     https://lnpay.cz/.well-known/lnurlp/satoshi</i><br>
               <input
                 class="input full-width"
@@ -84,7 +84,7 @@
           <div v-if="kind == 'lnd'">
             <div class="field">
               <label for="host">
-                 LND REST Host (Protokol + IP/Doména + Port)
+                 LND REST Host (Protocol + IP + Port)
               </label>
               <input
                 class="input full-width"
@@ -105,7 +105,7 @@
           </div>
           <div v-if="kind == 'sparko' || kind == 'lnbits'">
             <div class="field">
-              <label for="host"> Host (Protokol + IP/Doména + Port) </label>
+              <label for="host"> Host (Prtocol + IP/Doména + Port) </label>
               <input
                 class="input full-width"
                 name="host"
@@ -141,11 +141,11 @@
           </div>
           <div v-if="kind == 'lnpay'">
             <div class="field">
-              <label for="pak"> Public Access Key (pak) </label>
+              <label for="pak"> Public Access Key  </label>
               <input class="input full-width" name="pak" id="pak" />
             </div>
             <div class="field">
-              <label for="waki"> Wallet Invoice Key (waki) </label>
+              <label for="waki"> Wallet Invoice Key  </label>
               <input class="input full-width" name="waki" id="waki" />
             </div>
           </div>
